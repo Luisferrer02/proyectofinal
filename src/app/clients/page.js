@@ -225,7 +225,7 @@ const ClientsPage = () => {
   const columns = [
     { header: "Nombre", accessor: "name" },
     { header: "CIF", accessor: "cif" },
-    {
+    /*{
       header: "Dirección",
       accessor: (row) =>
         row.address
@@ -233,7 +233,7 @@ const ClientsPage = () => {
               row.address.city || "Ciudad desconocida"
             }`
           : "Dirección no disponible",
-    },
+    },*/
     {
       header: "Acciones",
       accessor: "actions",

@@ -224,8 +224,8 @@ const ProjectDetailsPage = () => {
               <p>{project.name || "N/A"}</p>
             </div>
             <div className="text-gray-800">
-              <strong>Descripción:</strong>
-              <p>{project.description || "Sin descripción"}</p>
+              <strong>Codigo de proyecto:</strong>
+              <p>{project.projectCode || "Sin codigo"}</p>
             </div>
           </div>
         </div>

@@ -10,10 +10,14 @@ const ProjectsPage = () => {
   const [projects, setProjects] = useState([]);
   const [isModalOpen, setModalOpen] = useState(false);
   const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    startDate: "",
-    endDate: "",
+    name: "Project Name",
+    description: "Project Description",
+    startDate: "2023-01-01",
+    endDate: "2023-12-31",
+    internalCode: "INT-001",
+    clientCode: "CLIENT-001",
+    projectAddress: "123 Main Street",
+    email: "project@example.com",
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
