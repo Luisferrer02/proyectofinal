@@ -20,6 +20,7 @@ const ProjectsPage = () => {
 
   const router = useRouter();
 
+
   useEffect(() => {
     if (!clientId) {
       setError("Error: ID del cliente no proporcionado.");
@@ -36,25 +37,25 @@ const ProjectsPage = () => {
         setError("Error: No se encontró el token JWT.");
         return;
       }
-  
+
       const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
       const url = `${baseUrl}/project/${clientId}`; // Corrige la URL aquí
-  
+
       console.log(`Fetching projects for client ID: ${clientId}`);
-  
+
       const response = await fetch(url, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-  
+
       if (response.ok) {
         const data = await response.json();
-  
+
         // Añadir console.log para inspeccionar los datos recibidos
         console.log("Datos recibidos de la API:", data);
-  
+
         setProjects(data);
       } else {
         const errorText = await response.text();
@@ -66,7 +67,6 @@ const ProjectsPage = () => {
       setLoading(false);
     }
   };
-  
 
   const handleSubmit = async (e) => {
     e.preventDefault(); // Evita el comportamiento por defecto del formulario
@@ -128,9 +128,16 @@ const ProjectsPage = () => {
     setModalOpen(true); // Abre el modal
   };
 
-  const handleProjectClick = (projectName) => {
-    console.log(`Proyecto clicado: ${projectName}`);
+  const handleProjectClick = (projectid) => {
+    // Asegúrate de usar clientId en lugar de id
+    if (!clientId) {
+      console.error("Client ID no está definido.");
+      return;
+    }
+    
+    router.push(`/clients/${clientId}/projects/${projectid}`);
   };
+  
 
   const handleCloseModal = () => {
     setModalOpen(false); // Cierra el modal
@@ -150,14 +157,14 @@ const ProjectsPage = () => {
       <h1 className="text-gray-800 text-2xl font-bold mb-4">
         Proyectos del Cliente
       </h1>
-  
+
       <button
         onClick={handleOpenModal} // Cambiado para manejar solo la apertura del modal
         className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
       >
         Crear Proyecto
       </button>
-  
+
       {projects.length > 0 ? (
         <div className="overflow-x-auto">
           <table className="min-w-full bg-white border border-gray-200 rounded-lg">
@@ -174,10 +181,11 @@ const ProjectsPage = () => {
             <tbody>
               {projects.map((project) => (
                 <tr key={project._id} className="hover:bg-gray-50">
-                  <td className="py-2 px-4 border-b border-gray-200 text-sm text-blue-600 cursor-pointer">
-                    <a onClick={() => console.log(project.name)}>
-                      {project.name}
-                    </a>
+                  <td
+                    className="py-2 px-4 border-b border-gray-200 text-sm text-blue-600 cursor-pointer"
+                    onClick={() => handleProjectClick(project._id)} // Llamamos a la función con _id
+                  >
+                    {project.name}
                   </td>
                   <td className="py-2 px-4 border-b border-gray-200 text-sm text-gray-800">
                     {project.email || "Sin correo electrónico"}
@@ -192,7 +200,7 @@ const ProjectsPage = () => {
           No se encontraron proyectos para este cliente.
         </p>
       )}
-  
+
       {isModalOpen && (
         <Modal
           isOpen={isModalOpen}
@@ -201,7 +209,7 @@ const ProjectsPage = () => {
         >
           <form onSubmit={handleSubmit}>
             {error && <p className="text-red-500">{error}</p>}
-  
+
             {/* Nombre del Proyecto */}
             <div className="mb-4">
               <label className="block text-gray-800">Nombre del Proyecto</label>
@@ -214,7 +222,7 @@ const ProjectsPage = () => {
                 required
               />
             </div>
-  
+
             {/* Descripción */}
             <div className="mb-4">
               <label className="block text-gray-800">Descripción</label>
@@ -225,7 +233,7 @@ const ProjectsPage = () => {
                 className="w-full border rounded p-2"
               />
             </div>
-  
+
             {/* Código Interno del Proyecto */}
             <div className="mb-4">
               <label className="block text-gray-800">
@@ -240,7 +248,7 @@ const ProjectsPage = () => {
                 required
               />
             </div>
-  
+
             {/* Código de Cliente */}
             <div className="mb-4">
               <label className="block text-gray-800">Código de Cliente</label>
@@ -253,7 +261,7 @@ const ProjectsPage = () => {
                 required
               />
             </div>
-  
+
             {/* Línea de Dirección del Proyecto */}
             <div className="mb-4">
               <label className="block text-gray-800">
@@ -268,7 +276,7 @@ const ProjectsPage = () => {
                 required
               />
             </div>
-  
+
             {/* Correo Electrónico */}
             <div className="mb-4">
               <label className="block text-gray-800">Correo Electrónico</label>
@@ -281,7 +289,7 @@ const ProjectsPage = () => {
                 required
               />
             </div>
-  
+
             {/* Botones */}
             <div className="flex justify-end space-x-4">
               <button
@@ -296,7 +304,6 @@ const ProjectsPage = () => {
       )}
     </div>
   );
-  
 };
 
 export default ProjectsPage;

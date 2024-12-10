@@ -104,8 +104,9 @@ const ClientDetailsPage = () => {
   };
 
   const handleViewAllProjects = () => {
-    router.push(`/clients/${id}/projects`);
+    router.push(`/clients/${id}/projects`); // Usa "id" extraído de params
   };
+  
   
 
   if (loading) {
