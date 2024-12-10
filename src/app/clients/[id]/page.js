@@ -30,7 +30,9 @@ const ClientDetailsPage = () => {
     try {
       const token = localStorage.getItem("jwt");
       if (!token) {
-        setError("Error: No se encontró el token JWT. Por favor, inicia sesión.");
+        setError(
+          "Error: No se encontró el token JWT. Por favor, inicia sesión."
+        );
         setLoading(false);
         return;
       }
@@ -69,7 +71,9 @@ const ClientDetailsPage = () => {
     try {
       const token = localStorage.getItem("jwt");
       if (!token) {
-        setError("Error: No se encontró el token JWT. Por favor, inicia sesión.");
+        setError(
+          "Error: No se encontró el token JWT. Por favor, inicia sesión."
+        );
         setProjectsLoading(false);
         return;
       }
@@ -106,11 +110,11 @@ const ClientDetailsPage = () => {
   const handleViewAllProjects = () => {
     router.push(`/clients/${id}/projects`); // Usa "id" extraído de params
   };
-  
-  
 
   if (loading) {
-    return <div className="p-6 text-gray-500">Cargando detalles del cliente...</div>;
+    return (
+      <div className="p-6 text-gray-500">Cargando detalles del cliente...</div>
+    );
   }
 
   if (error) {
@@ -118,7 +122,11 @@ const ClientDetailsPage = () => {
   }
 
   if (!client) {
-    return <div className="p-6 text-gray-500">No se encontraron datos para este cliente.</div>;
+    return (
+      <div className="p-6 text-gray-500">
+        No se encontraron datos para este cliente.
+      </div>
+    );
   }
 
   return (
@@ -153,19 +161,16 @@ const ClientDetailsPage = () => {
       </div>
 
       {/* Sección de proyectos recientes */}
-      <h2 className="text-2xl font-bold text-black mt-8 mb-4">
+      <h2 className="text-2xl font-bold mt-8 mb-4 text-gray-900">
         Proyectos Recientes
       </h2>
       <div className="bg-white shadow-md rounded-lg p-6">
         {projectsLoading ? (
           <p className="text-gray-500">Cargando proyectos...</p>
         ) : projects.length > 0 ? (
-          <ul className="space-y-4">
+          <ul className="space-y-4 ">
             {projects.map((project) => (
-              <li key={project.id} className="border-b pb-2">
-                <h3 className="text-xl font-semibold text-black">{project.name}</h3>
-                <p className="text-black">{project.description || "Sin descripción"}</p>
-              </li>
+              <li key={project._id} className = "text-gray-900">{project.name}</li>
             ))}
           </ul>
         ) : (

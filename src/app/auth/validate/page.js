@@ -8,8 +8,11 @@ const ValidatePage = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
     const email = searchParams.get("email");
-    const [code, setCode] = useState(new Array(6).fill("")); // Estado para 6 inputs
+    const [code, setCode] = useState(new Array(6).fill(""));
     const [error, setError] = useState("");
+
+    const MAX_ATTEMPTS = 3; // Máximo de intentos permitidos
+    const currentAttempts = parseInt(localStorage.getItem("validationAttempts") || "0", 10);
 
     const handleInputChange = (value, index) => {
         if (isNaN(value)) return; // Solo permitir números
@@ -17,14 +20,13 @@ const ValidatePage = () => {
         newCode[index] = value;
         setCode(newCode);
 
-        // Auto-focus al siguiente input
         if (value && index < 5) {
             document.getElementById(`input-${index + 1}`).focus();
         }
     };
 
     const handleValidation = async () => {
-        const fullCode = code.join(""); // Combinar el código
+        const fullCode = code.join("");
         if (fullCode.length !== 6) {
             setError("Por favor, ingresa el código completo.");
             return;
@@ -48,9 +50,19 @@ const ValidatePage = () => {
 
             if (response.ok) {
                 console.log("Validación exitosa");
+                localStorage.removeItem("validationAttempts"); // Restablecer intentos en caso de éxito
                 router.push(`/auth/login?email=${encodeURIComponent(email)}`);
             } else {
-                setError("Código inválido o expirado.");
+                const newAttempts = currentAttempts + 1;
+                localStorage.setItem("validationAttempts", newAttempts);
+
+                if (newAttempts >= MAX_ATTEMPTS) {
+                    localStorage.removeItem("jwt"); // Deshabilitar el token localmente
+                    setError("Has alcanzado el número máximo de intentos. Tu sesión ha sido inhabilitada.");
+                    setTimeout(() => router.push("/auth/login"), 3000); // Redirigir al usuario
+                } else {
+                    setError(`Código inválido. Te quedan ${MAX_ATTEMPTS - newAttempts} intentos.`);
+                }
             }
         } catch (err) {
             console.error("Error al validar el correo:", err);
@@ -59,9 +71,9 @@ const ValidatePage = () => {
     };
 
     return (
-        <FormWrapper title="Enter Verification Code">
+        <FormWrapper title="Introduce codigo de verificacion">
             <p className="text-black mb-6 text-center">
-                We have just sent a verification code to <strong>{email}</strong>
+                Te acabamos de mandar un codigo de verificacion a: <strong>{email}</strong>
             </p>
             <div className="flex justify-center gap-2 mb-4">
                 {code.map((digit, index) => (
@@ -80,15 +92,16 @@ const ValidatePage = () => {
             <button
                 onClick={handleValidation}
                 className="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-lg font-semibold transition duration-200"
+                disabled={currentAttempts >= MAX_ATTEMPTS} // Deshabilitar botón tras muchos intentos
             >
-                Verify
+                Verificar
             </button>
             <p className="text-black mt-4 text-center">
                 <button
                     onClick={() => console.log("Resend code action here")}
                     className="text-blue-500 hover:underline"
                 >
-                    Resend the code again
+                    Volver a mandar el codigo
                 </button>
             </p>
         </FormWrapper>
